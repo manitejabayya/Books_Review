@@ -28,13 +28,16 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
+      console.log("[LOGIN] Attempting login with:", email);
       const response = await api.post('/auth/login', { email, password });
-      const { token, user } = response.data;
+      console.log("[LOGIN] Response:", response.data);
+      const { token, user } = response.data.data;
       localStorage.setItem('token', token);
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       setUser(user);
       return { success: true };
     } catch (error) {
+      console.error("[LOGIN] Error:", error.response?.data || error.message);
       return { 
         success: false, 
         error: error.response?.data?.message || 'Login failed' 
@@ -42,18 +45,23 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const signup = async (name, email, password) => {
+  const signup = async (formData) => {
     try {
-      const response = await api.post('/auth/signup', { name, email, password });
-      const { token, user } = response.data;
+      console.log("[SIGNUP] Attempting signup with:", formData);
+      const response = await api.post('/auth/register', formData);
+      console.log("[SIGNUP] Response:", response.data);
+      const { token, user } = response.data.data;
       localStorage.setItem('token', token);
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       setUser(user);
       return { success: true };
     } catch (error) {
-      return { 
-        success: false, 
-        error: error.response?.data?.message || 'Signup failed' 
+      console.error("[SIGNUP] Error:", error.response?.data || error.message);
+      return {
+        success: false,
+        error: error.response?.data?.errors
+          ? error.response.data.errors.map(e => e.msg).join(', ')
+          : (error.response?.data?.message || 'Signup failed')
       };
     }
   };

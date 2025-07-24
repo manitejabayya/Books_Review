@@ -4,7 +4,8 @@ export const validateEmail = (email) => {
 };
 
 export const validatePassword = (password) => {
-  return password.length >= 6;
+  // At least 6 chars, one uppercase, one lowercase, one number
+  return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/.test(password);
 };
 
 export const validateRequired = (value) => {
@@ -73,23 +74,25 @@ export const validateLoginForm = (formData) => {
 
 export const validateSignupForm = (formData) => {
   const errors = {};
-  
-  if (!validateRequired(formData.name)) {
-    errors.name = 'Name is required';
+
+  if (!validateRequired(formData.username)) {
+    errors.username = 'Username is required';
   }
-  
+  if (!validateRequired(formData.firstName)) {
+    errors.firstName = 'First name is required';
+  }
+  if (!validateRequired(formData.lastName)) {
+    errors.lastName = 'Last name is required';
+  }
   if (!validateEmail(formData.email)) {
     errors.email = 'Please enter a valid email';
   }
-  
   if (!validatePassword(formData.password)) {
-    errors.password = 'Password must be at least 6 characters';
+    errors.password = 'Password must be at least 6 characters and contain uppercase, lowercase, and a number';
   }
-  
   if (formData.password !== formData.confirmPassword) {
     errors.confirmPassword = 'Passwords do not match';
   }
-  
   return {
     isValid: Object.keys(errors).length === 0,
     errors

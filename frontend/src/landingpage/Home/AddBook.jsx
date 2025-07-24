@@ -102,12 +102,13 @@ const AddBook = () => {
     setLoading(true);
 
     try {
-      // Call backend API to add book
-      await api.post('/books', formData);
+      console.log("[ADD BOOK] Submitting:", formData);
+      const response = await api.post('/books', formData);
+      console.log("[ADD BOOK] Response:", response.data);
       alert('Book added successfully!');
       navigate('/');
     } catch (error) {
-      console.error('Error adding book:', error);
+      console.error('[ADD BOOK] Error:', error.response?.data || error.message);
       alert(error.response?.data?.message || 'Failed to add book. Please try again.');
     } finally {
       setLoading(false);

@@ -7,9 +7,11 @@ const { validationResult } = require('express-validator');
 // @route   POST /api/auth/register
 // @access  Public
 const register = asyncHandler(async (req, res) => {
+  console.log('[REGISTER] Body:', req.body);
   // Check for validation errors
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
+    console.log('[REGISTER] Validation errors:', errors.array());
     return res.status(400).json({
       success: false,
       message: 'Validation failed',
@@ -70,9 +72,11 @@ const register = asyncHandler(async (req, res) => {
 // @route   POST /api/auth/login
 // @access  Public
 const login = asyncHandler(async (req, res) => {
+  console.log('[LOGIN] Body:', req.body);
   // Check for validation errors
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
+    console.log('[LOGIN] Validation errors:', errors.array());
     return res.status(400).json({
       success: false,
       message: 'Validation failed',
@@ -106,6 +110,7 @@ const login = asyncHandler(async (req, res) => {
       }
     });
   } catch (error) {
+    console.error('[LOGIN] Error:', error);
     res.status(401).json({
       success: false,
       message: error.message

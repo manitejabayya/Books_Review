@@ -5,9 +5,11 @@ const { validationResult } = require('express-validator');
 // @route   POST /api/books
 // @access  Private
 const addBook = async (req, res) => {
+  console.log('[ADD BOOK] Body:', req.body);
   // Validate request
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
+    console.log('[ADD BOOK] Validation errors:', errors.array());
     return res.status(400).json({
       success: false,
       message: 'Validation failed',
@@ -51,6 +53,7 @@ const addBook = async (req, res) => {
       data: { book },
     });
   } catch (error) {
+    console.error('[ADD BOOK] Error:', error);
     res.status(500).json({
       success: false,
       message: 'Error adding book',

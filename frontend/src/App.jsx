@@ -20,33 +20,40 @@ function PrivateRoute({ children }) {
 }
 
 function App() {
+  const { user, logout } = useAuth();
   return (
-    <AuthProvider>
-      <BrowserRouter>
-        <div className="flex flex-col min-h-screen">
-          <Navbar />
-          <main className="flex-1">
-            <Routes>
-              <Route path="/" element={<Hero />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />
-              <Route path="/unauthorized" element={<Unauthorized />} />
-              <Route path="/books" element={<BookList />} />
-              <Route path="/books/:id" element={<BookDetail />} />
-              <Route path="/add-book" element={
-                <PrivateRoute>
-                  <AddBook />
-                </PrivateRoute>
-              } />
-              {/* Fallback route */}
-              <Route path="*" element={<Navigate to="/" />} />
-            </Routes>
-          </main>
-          <Footer />
-        </div>
-      </BrowserRouter>
-    </AuthProvider>
+    <BrowserRouter>
+      <div className="flex flex-col min-h-screen">
+        <Navbar />
+        {user && (
+          <button
+            style={{ position: "absolute", top: 16, right: 16, zIndex: 1000 }}
+            onClick={logout}
+          >
+            Logout
+          </button>
+        )}
+        <main className="flex-1">
+          <Routes>
+            <Route path="/" element={<Hero />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/unauthorized" element={<Unauthorized />} />
+            <Route path="/books" element={<BookList />} />
+            <Route path="/books/:id" element={<BookDetail />} />
+            <Route path="/add-book" element={
+              <PrivateRoute>
+                <AddBook />
+              </PrivateRoute>
+            } />
+            {/* Fallback route */}
+            <Route path="*" element={<Navigate to="/" />} />
+          </Routes>
+        </main>
+        <Footer />
+      </div>
+    </BrowserRouter>
   );
 }
 
