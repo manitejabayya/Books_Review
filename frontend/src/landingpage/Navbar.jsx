@@ -45,7 +45,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-white shadow-lg border-b border-gray-200 sticky top-0 z-50 backdrop-blur-sm bg-opacity-95">
+    <nav className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 shadow-2xl border-b border-slate-700/50 sticky top-0 z-50 backdrop-blur-md bg-opacity-95">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
@@ -54,17 +54,16 @@ const Navbar = () => {
             className="flex items-center space-x-3 group"
             onClick={() => setIsMenuOpen(false)}
           >
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center transform group-hover:scale-105 transition-transform duration-200 shadow-md">
+            <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-500 rounded-xl flex items-center justify-center transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-lg group-hover:shadow-emerald-500/25">
               {getIcon('book')}
-              <span className="text-white font-bold text-lg">📚</span>
             </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <span className="text-xl font-bold bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent hover:from-emerald-300 hover:to-cyan-300 transition-all duration-300">
               BookReview
             </span>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-6">
+          <div className="hidden md:flex items-center space-x-2">
             {navLinks.map((link) => {
               if (link.protected && !user) return null;
               
@@ -72,13 +71,15 @@ const Navbar = () => {
                 <Link
                   key={link.path}
                   to={link.path}
-                  className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
+                  className={`flex items-center space-x-2 px-5 py-2.5 rounded-xl font-medium transition-all duration-300 transform hover:scale-105 ${
                     isActive(link.path)
-                      ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-md transform scale-105'
-                      : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'
+                      ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg shadow-emerald-500/25 scale-105'
+                      : 'text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-slate-700 hover:to-slate-600 hover:shadow-md'
                   }`}
                 >
-                  {getIcon(link.icon)}
+                  <span className={`${isActive(link.path) ? 'text-white' : 'text-emerald-400'}`}>
+                    {getIcon(link.icon)}
+                  </span>
                   <span>{link.label}</span>
                 </Link>
               );
@@ -91,17 +92,17 @@ const Navbar = () => {
               <div className="relative">
                 <button
                   onClick={() => setIsMenuOpen(!isMenuOpen)}
-                  className="flex items-center space-x-3 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg px-4 py-2 hover:from-blue-100 hover:to-purple-100 transition-all duration-200 border border-blue-200"
+                  className="flex items-center space-x-3 bg-gradient-to-r from-slate-700/80 to-slate-600/80 rounded-xl px-4 py-2.5 hover:from-slate-600 hover:to-slate-500 transition-all duration-300 border border-slate-600/50 hover:border-emerald-400/50 transform hover:scale-105"
                 >
-                  <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center text-white font-semibold text-sm">
+                  <div className="w-8 h-8 bg-gradient-to-br from-emerald-400 via-teal-400 to-cyan-400 rounded-full flex items-center justify-center text-slate-900 font-bold text-sm shadow-lg">
                     {user.name?.charAt(0).toUpperCase() || 'U'}
                   </div>
-                  <span className="hidden sm:block text-gray-700 font-medium">
+                  <span className="hidden sm:block text-slate-200 font-medium">
                     {user.name || 'User'}
                   </span>
                   <svg
-                    className={`w-4 h-4 text-gray-500 transition-transform duration-200 ${
-                      isMenuOpen ? 'rotate-180' : ''
+                    className={`w-4 h-4 text-slate-400 transition-all duration-300 ${
+                      isMenuOpen ? 'rotate-180 text-emerald-400' : ''
                     }`}
                     fill="currentColor"
                     viewBox="0 0 20 20"
@@ -111,7 +112,7 @@ const Navbar = () => {
                 </button>
 
                 {isMenuOpen && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-200 py-2 animate-fadeIn">
+                  <div className="absolute right-0 mt-3 w-56 bg-slate-800/95 backdrop-blur-md rounded-xl shadow-2xl border border-slate-700/50 py-2 animate-fadeIn">
                     {/* Mobile nav links */}
                     <div className="md:hidden">
                       {navLinks.map((link) => {
@@ -122,21 +123,23 @@ const Navbar = () => {
                             key={link.path}
                             to={link.path}
                             onClick={() => setIsMenuOpen(false)}
-                            className={`flex items-center space-x-3 px-4 py-2 text-sm hover:bg-gray-50 transition-colors ${
-                              isActive(link.path) ? 'text-blue-600 bg-blue-50' : 'text-gray-700'
+                            className={`flex items-center space-x-3 px-4 py-3 text-sm hover:bg-slate-700/50 transition-all duration-200 mx-2 rounded-lg ${
+                              isActive(link.path) ? 'text-emerald-400 bg-slate-700/30' : 'text-slate-300 hover:text-white'
                             }`}
                           >
-                            {getIcon(link.icon)}
+                            <span className="text-emerald-400">
+                              {getIcon(link.icon)}
+                            </span>
                             <span>{link.label}</span>
                           </Link>
                         );
                       })}
-                      <hr className="my-2 border-gray-200" />
+                      <hr className="my-2 border-slate-700/50 mx-2" />
                     </div>
 
                     <button
                       onClick={handleLogout}
-                      className="flex items-center space-x-3 w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                      className="flex items-center space-x-3 w-full px-4 py-3 text-sm text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all duration-200 mx-2 rounded-lg"
                     >
                       <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clipRule="evenodd" />
@@ -150,13 +153,13 @@ const Navbar = () => {
               <div className="flex items-center space-x-3">
                 <Link
                   to="/login"
-                  className="text-gray-600 hover:text-blue-600 font-medium transition-colors duration-200"
+                  className="text-slate-300 hover:text-emerald-400 font-medium transition-all duration-300 px-4 py-2 rounded-lg hover:bg-slate-700/50"
                 >
                   Login
                 </Link>
                 <Link
                   to="/signup"
-                  className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-4 py-2 rounded-lg font-medium hover:from-blue-600 hover:to-purple-600 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105"
+                  className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-6 py-2.5 rounded-xl font-medium hover:from-emerald-600 hover:to-teal-600 transition-all duration-300 shadow-lg hover:shadow-emerald-500/25 transform hover:scale-105 hover:-translate-y-0.5"
                 >
                   Sign Up
                 </Link>
@@ -168,7 +171,7 @@ const Navbar = () => {
           <div className="md:hidden">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-gray-600 hover:text-blue-600 transition-colors duration-200"
+              className="text-slate-400 hover:text-emerald-400 transition-colors duration-300 p-2 rounded-lg hover:bg-slate-700/50"
             >
               <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
@@ -181,7 +184,7 @@ const Navbar = () => {
       {/* Click outside to close menu */}
       {isMenuOpen && (
         <div
-          className="fixed inset-0 z-40"
+          className="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm"
           onClick={() => setIsMenuOpen(false)}
         ></div>
       )}
