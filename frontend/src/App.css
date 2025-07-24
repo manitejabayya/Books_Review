@@ -1,15 +1,51 @@
 @import "tailwindcss";
-#root {
-  max-width: 100vw;
-  margin: 0;
-  padding: 2rem 1rem;
-  text-align: center;
-  background: #f5f3ea;
-  min-height: 100vh;
-  width: 100vw;
+
+/* Reset and base styles */
+* {
   box-sizing: border-box;
 }
 
+html, body {
+  width: 100%;
+  min-width: 100%;
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: #f5f3ea;
+  width: 100%;
+  font-family: 'Merriweather', Georgia, serif;
+  line-height: 1.7;
+  font-weight: 400;
+  color: #22223b;
+  /* Remove the flex and place-items that were causing layout issues */
+}
+
+#root {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  /* Remove padding for full-width layouts like login/signup */
+  padding: 0;
+  background: #f5f3ea;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+/* Container for pages that need centered content */
+.page-container {
+  padding: 2rem 1rem;
+  text-align: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Card component */
 .card {
   background: #fff;
   border-radius: 1rem;
@@ -21,8 +57,22 @@
   transition: box-shadow 0.2s;
   box-sizing: border-box;
 }
+
 .card:hover {
   box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Merriweather', Georgia, serif;
+  color: #9d4edd;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+}
+
+h1 {
+  font-size: 2.5em;
+  line-height: 1.1;
 }
 
 .book-title {
@@ -31,23 +81,40 @@
   color: #3e2723;
   margin-bottom: 0.5em;
 }
+
 .book-author {
   font-size: 1.1em;
   color: #795548;
   margin-bottom: 1em;
 }
+
+/* Review section */
 .review-section {
   background: #f9f6f2;
   border-radius: 0.75rem;
   padding: 1.5em;
   margin-top: 1.5em;
 }
+
 .rating-stars {
   color: #ffd700;
   font-size: 1.2em;
   margin-bottom: 0.5em;
 }
 
+/* Links */
+a {
+  font-weight: 500;
+  color: #4361ee;
+  text-decoration: underline;
+  transition: color 0.2s;
+}
+
+a:hover {
+  color: #b5179e;
+}
+
+/* Buttons */
 button {
   border-radius: 8px;
   border: 1px solid #d7ccc8;
@@ -60,54 +127,29 @@ button {
   cursor: pointer;
   transition: background 0.2s, border-color 0.25s;
 }
+
 button:hover {
   background: #8d6e63;
   border-color: #a1887f;
 }
+
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
-@media (max-width: 900px) {
-  #root {
-    padding: 1.5rem 0.5rem;
-    max-width: 100vw;
-    width: 100vw;
-    margin: 0;
-  }
-  .card {
-    padding: 1.5em 0.5em;
-    max-width: 100vw;
-    width: 100vw;
-    margin: 1em 0;
-  }
-}
-
-@media (max-width: 600px) {
-  #root {
-    padding: 1rem 0;
-    max-width: 100vw;
-    width: 100vw;
-    margin: 0;
-  }
-  .card {
-    padding: 1em 0;
-    max-width: 100vw;
-    width: 100vw;
-    margin: 0.5em 0;
-  }
-}
-
+/* Logo animations */
 .logo {
   height: 6em;
   padding: 1.5em;
   will-change: filter;
   transition: filter 300ms;
 }
+
 .logo:hover {
   filter: drop-shadow(0 0 2em #a1887faa);
 }
+
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
@@ -127,6 +169,83 @@ button:focus-visible {
   }
 }
 
+/* Ensure Tailwind's min-h-screen works properly */
+.min-h-screen {
+  min-height: 100vh !important;
+}
+
+/* Mobile responsive */
+@media (max-width: 900px) {
+  .page-container {
+    padding: 1.5rem 1rem;
+  }
+  
+  .card {
+    padding: 1.5em 1em;
+    margin: 1em auto;
+    max-width: calc(100% - 2rem);
+  }
+}
+
+@media (max-width: 600px) {
+  .page-container {
+    padding: 1rem 0.5rem;
+  }
+  
+  .card {
+    padding: 1em 0.75em;
+    margin: 0.5em auto;
+    max-width: calc(100% - 1rem);
+  }
+  
+  h1 {
+    font-size: 2em;
+  }
+  
+  .book-title {
+    font-size: 1.5em;
+  }
+}
+
+@media (max-width: 400px) {
+  .page-container {
+    padding: 1rem 0.25rem;
+  }
+  
+  .card {
+    padding: 1em 0.5em;
+    margin: 0.5em auto;
+    max-width: calc(100% - 0.5rem);
+  }
+}
+
+/* Utility classes */
 .read-the-docs {
   color: #888;
+}
+
+/* Ensure full width for auth pages */
+.auth-page {
+  width: 100vw;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+/* Override any conflicting styles for full-width layouts */
+.full-width {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Fix for horizontal overflow issues */
+html, body, #root {
+  overflow-x: hidden;
+}
+
+/* Ensure no horizontal scrolling */
+* {
+  max-width: 100%;
 }

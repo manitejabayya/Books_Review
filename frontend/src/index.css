@@ -1,4 +1,10 @@
 @import "tailwindcss";
+
+/* Base reset and typography */
+* {
+  box-sizing: border-box;
+}
+
 :root {
   font-family: 'Merriweather', Georgia, serif;
   line-height: 1.7;
@@ -12,19 +18,11 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-a {
-  font-weight: 500;
-  color: #4361ee;
-  text-decoration: underline;
-  transition: color 0.2s;
-}
-a:hover {
-  color: #b5179e;
-}
-
+/* HTML and body setup */
 html, body {
-  width: 100vw;
-  min-width: 100vw;
+  width: 100%;
+  min-width: 100%;
+  max-width: 100%;
   overflow-x: hidden;
   margin: 0;
   padding: 0;
@@ -32,26 +30,50 @@ html, body {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
+  /* REMOVED: display: flex; place-items: center; - This was causing the gap */
   min-width: 320px;
   min-height: 100vh;
   background: #f5f3ea;
-  width: 100vw;
+  width: 100%;
   box-sizing: border-box;
 }
 
+/* Root element setup */
+#root {
+  width: 100%;
+  max-width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Typography */
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Merriweather', Georgia, serif;
   color: #9d4edd;
   margin-top: 1.5em;
   margin-bottom: 0.5em;
 }
+
 h1 {
   font-size: 2.5em;
   line-height: 1.1;
 }
 
+/* Links */
+a {
+  font-weight: 500;
+  color: #4361ee;
+  text-decoration: underline;
+  transition: color 0.2s;
+}
+
+a:hover {
+  color: #b5179e;
+}
+
+/* Buttons */
 button {
   border-radius: 8px;
   border: 1px solid #d7ccc8;
@@ -64,23 +86,41 @@ button {
   cursor: pointer;
   transition: background 0.2s, border-color 0.25s;
 }
+
 button:hover {
   background: #8d6e63;
   border-color: #a1887f;
 }
+
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+/* Mobile responsive typography */
+@media (max-width: 600px) {
+  h1 {
+    font-size: 2em;
+  }
+}
+
+@media (max-width: 400px) {
+  h1 {
+    font-size: 1.75em;
+  }
+}
+
+/* Light theme adjustments */
 @media (prefers-color-scheme: light) {
   :root {
     color: #3e2723;
     background-color: #f5f3ea;
   }
+  
   a:hover {
     color: #a1887f;
   }
+  
   button {
     background-color: #6d4c41;
   }
