@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from "../../context/AuthContext";
+import api from '../../services/api';
 
 const AddBook = () => {
   const { user } = useAuth();
@@ -101,18 +102,13 @@ const AddBook = () => {
     setLoading(true);
 
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // Here you would make the actual API call
-      console.log('Book data to submit:', formData);
-      
-      // Show success message and redirect
+      // Call backend API to add book
+      await api.post('/books', formData);
       alert('Book added successfully!');
       navigate('/');
     } catch (error) {
       console.error('Error adding book:', error);
-      alert('Failed to add book. Please try again.');
+      alert(error.response?.data?.message || 'Failed to add book. Please try again.');
     } finally {
       setLoading(false);
     }

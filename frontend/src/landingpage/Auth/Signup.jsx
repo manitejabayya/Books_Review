@@ -5,10 +5,14 @@ import { validateSignupForm } from '../../utils/validators';
 
 const Signup = () => {
   const [formData, setFormData] = useState({
-    name: '',
+    username: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    firstName: '',
+    lastName: '',
+    bio: '',
+    favoriteGenres: [],
   });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
@@ -53,7 +57,7 @@ const Signup = () => {
     setErrors({});
 
     try {
-      const result = await signup(formData.name, formData.email, formData.password);
+      const result = await signup(formData);
       if (result.success) {
         navigate('/');
       } else {
