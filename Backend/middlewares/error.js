@@ -1,7 +1,7 @@
 // Error handling middleware for 404 routes
 const notFound = (req, res, next) => {
   const error = new Error(`Route not found - ${req.originalUrl}`);
-  error.statusCode = 404;
+  res.status(404);
   next(error);
 };
 

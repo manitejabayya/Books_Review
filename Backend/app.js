@@ -27,14 +27,6 @@ app.use('/api/users', userRoutes);
 app.use('/api/books', bookRoutes);
 app.use('/api/reviews', reviewRoutes);
 
-// Root route
-app.get('/', (req, res) => {
-  res.status(200).json({ message: 'Book Review Platform API is running.' });
-});
-
-// Favicon handler
-app.get('/favicon.ico', (req, res) => res.status(204).end());
-
 // Health check route
 app.get('/api/health', (req, res) => {
   res.status(200).json({ 
