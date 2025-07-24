@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider, useAuth } from './context/Authcontext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import Navbar from './landingpage/Navbar';
 import Footer from './landingpage/Footer';
 import Hero from './landingpage/About/Hero';
