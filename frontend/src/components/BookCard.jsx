@@ -6,7 +6,7 @@ const BookCard = ({ book }) => {
   const navigate = useNavigate();
 
   const handleCardClick = () => {
-    navigate(`/book/${book._id}`);
+    navigate(`/books/${book._id}`);
   };
 
   return (

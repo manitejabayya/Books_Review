@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from "../../context/AuthContext";
+import api from '../../services/api';
 
 const BookDetail = () => {
   const { id } = useParams();
@@ -19,77 +20,29 @@ const BookDetail = () => {
   const [reviewsPage, setReviewsPage] = useState(1);
   const reviewsPerPage = 5;
 
-  // Mock data - replace with actual API calls
+  // Fetch book and reviews from backend
   useEffect(() => {
-    const fetchBookData = async () => {
+    const fetchBookAndReviews = async () => {
       setLoading(true);
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      const mockBook = {
-        id: parseInt(id),
-        title: "The Great Gatsby",
-        author: "F. Scott Fitzgerald",
-        genre: "Classic Literature",
-        description: "The Great Gatsby is a 1925 novel by American writer F. Scott Fitzgerald. Set in the Jazz Age on prosperous Long Island and in New York City, the novel tells the first-person story of Nick Carraway, a bond salesman who rents a house next to Jay Gatsby, an enigmatic multi-millionaire who holds lavish parties but does not attend them.",
-        averageRating: 4.2,
-        reviewCount: 156,
-        dateAdded: "2024-01-15",
-        coverImage: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400&h=600&fit=crop",
-        addedBy: "John Doe"
-      };
-
-      const mockReviews = [
-        {
-          id: 1,
-          rating: 5,
-          reviewText: "Absolutely brilliant! Fitzgerald's masterpiece continues to resonate with modern readers. The symbolism and character development are exceptional.",
-          reviewer: "Sarah Johnson",
-          dateReviewed: "2024-02-20",
-          avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=40&h=40&fit=crop&crop=face"
-        },
-        {
-          id: 2,
-          rating: 4,
-          reviewText: "A classic that deserves its reputation. The prose is beautiful and the themes are timeless. However, some parts felt a bit slow.",
-          reviewer: "Mike Chen",
-          dateReviewed: "2024-02-18",
-          avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face"
-        },
-        {
-          id: 3,
-          rating: 5,
-          reviewText: "One of the greatest American novels ever written. The symbolism of the green light and the critique of the American Dream are profound.",
-          reviewer: "Emily Davis",
-          dateReviewed: "2024-02-15",
-          avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face"
-        },
-        {
-          id: 4,
-          rating: 3,
-          reviewText: "Good book but overhyped in my opinion. The characters are well-developed but the story didn't captivate me as much as I expected.",
-          reviewer: "Robert Wilson",
-          dateReviewed: "2024-02-12",
-          avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"
-        },
-        {
-          id: 5,
-          rating: 4,
-          reviewText: "Beautiful writing and compelling themes. A must-read for anyone interested in American literature and the Jazz Age.",
-          reviewer: "Lisa Martinez",
-          dateReviewed: "2024-02-10",
-          avatar: "https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?w=40&h=40&fit=crop&crop=face"
-        }
-      ];
-
-      setBook(mockBook);
-      setReviews(mockReviews);
-      setLoading(false);
+      try {
+        // Fetch book details
+        const bookRes = await api.get(`/books/${id}`);
+        setBook(bookRes.data.data?.book || bookRes.data.book || bookRes.data);
+        // Fetch reviews for this book
+        const reviewsRes = await api.get(`/books/${id}/reviews`, {
+          params: { page: reviewsPage, limit: reviewsPerPage }
+        });
+        setReviews(reviewsRes.data.data?.reviews || reviewsRes.data.reviews || reviewsRes.data);
+      } catch (err) {
+        setBook(null);
+        setReviews([]);
+      } finally {
+        setLoading(false);
+      }
     };
-
-    fetchBookData();
-  }, [id]);
+    fetchBookAndReviews();
+    // eslint-disable-next-line
+  }, [id, reviewsPage]);
 
   const renderStars = (rating, size = 'w-5 h-5', interactive = false, onStarClick = null) => {
     const stars = [];
@@ -100,12 +53,11 @@ const BookDetail = () => {
           key={i}
           type={interactive ? 'button' : undefined}
           onClick={interactive ? () => onStarClick(i) : undefined}
-          className={`${size} ${
-            i <= rating ? 'text-yellow-400' : 'text-gray-300'
-          } ${interactive ? 'hover:text-yellow-400 cursor-pointer' : ''} transition-colors duration-200`}
+          className={`${size} ${interactive ? 'hover:text-yellow-400 cursor-pointer' : ''} transition-colors duration-200`}
           disabled={!interactive}
+          style={{ background: 'none', border: 'none', padding: 0 }}
         >
-          <svg fill="currentColor" viewBox="0 0 20 20">
+          <svg fill={i <= rating ? '#facc15' : '#d1d5db'} viewBox="0 0 20 20" className="w-full h-full">
             <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
           </svg>
         </button>
@@ -117,49 +69,38 @@ const BookDetail = () => {
 
   const handleReviewSubmit = async (e) => {
     e.preventDefault();
-    
     if (!user) {
       alert('Please log in to write a review');
       return;
     }
-
-    if (!reviewForm.reviewText.trim()) {
-      alert('Please write a review before submitting');
+    if (reviewForm.reviewText.trim().length < 10) {
+      alert('Review must be at least 10 characters.');
       return;
     }
-
     setReviewForm(prev => ({ ...prev, isSubmitting: true }));
-
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      const newReview = {
-        id: reviews.length + 1,
+      // Log the review payload for debugging
+      console.log("Submitting review:", {
         rating: reviewForm.rating,
-        reviewText: reviewForm.reviewText,
-        reviewer: user.name || 'Anonymous',
-        dateReviewed: new Date().toISOString().split('T')[0],
-        avatar: `https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face`
-      };
-
-      setReviews(prev => [newReview, ...prev]);
+        reviewText: reviewForm.reviewText
+      });
+      // Submit review to backend
+      await api.post(`/books/${id}/reviews`, {
+        rating: reviewForm.rating,
+        reviewText: reviewForm.reviewText
+      });
+      // Refetch reviews and book details
+      const [bookRes, reviewsRes] = await Promise.all([
+        api.get(`/books/${id}`),
+        api.get(`/books/${id}/reviews`, { params: { page: 1, limit: reviewsPerPage } })
+      ]);
+      setBook(bookRes.data.data?.book || bookRes.data.book || bookRes.data);
+      setReviews(reviewsRes.data.data?.reviews || reviewsRes.data.reviews || reviewsRes.data);
       setReviewForm({ rating: 5, reviewText: '', isSubmitting: false });
       setShowReviewForm(false);
-
-      // Update book's average rating and review count
-      const newReviewCount = book.reviewCount + 1;
-      const newAverageRating = ((book.averageRating * book.reviewCount) + reviewForm.rating) / newReviewCount;
-      
-      setBook(prev => ({
-        ...prev,
-        averageRating: Math.round(newAverageRating * 10) / 10,
-        reviewCount: newReviewCount
-      }));
-
+      setReviewsPage(1);
       alert('Review submitted successfully!');
     } catch (error) {
-      console.error('Error submitting review:', error);
       alert('Failed to submit review. Please try again.');
     } finally {
       setReviewForm(prev => ({ ...prev, isSubmitting: false }));
@@ -407,18 +348,28 @@ const BookDetail = () => {
               <>
                 <div className="space-y-6">
                   {paginatedReviews.map((review) => (
-                    <div key={review.id} className="border-b border-gray-200 last:border-b-0 pb-6 last:pb-0">
+                    <div key={review._id} className="border-b border-gray-200 last:border-b-0 pb-6 last:pb-0">
                       <div className="flex items-start space-x-4">
-                        <img
-                          src={review.avatar}
-                          alt={review.reviewer}
-                          className="w-12 h-12 rounded-full object-cover border-2 border-gray-200"
-                        />
+                        {/* Reviewer Avatar: image if available, else text avatar */}
+                        {review.reviewer?.profilePicture ? (
+                          <img
+                            src={review.reviewer.profilePicture}
+                            alt={review.reviewer.username || 'User'}
+                            className="w-12 h-12 rounded-full object-cover border-2 border-gray-200"
+                            onError={e => { e.target.onerror = null; e.target.src = '/default-avatar.png'; }}
+                          />
+                        ) : (
+                          <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center border-2 border-gray-200 text-xl font-bold text-gray-600">
+                            {(review.reviewer?.firstName?.[0] || review.reviewer?.username?.[0] || 'U').toUpperCase()}
+                          </div>
+                        )}
                         <div className="flex-1">
                           <div className="flex items-center justify-between mb-2">
                             <div>
-                              <h4 className="font-semibold text-gray-800">{review.reviewer}</h4>
-                              <p className="text-sm text-gray-500">{formatDate(review.dateReviewed)}</p>
+                              <h4 className="font-semibold text-gray-800">
+                                {review.reviewer?.firstName || ''} {review.reviewer?.lastName || review.reviewer?.username || 'User'}
+                              </h4>
+                              <p className="text-sm text-gray-500">{formatDate(review.createdAt)}</p>
                             </div>
                             {renderStars(review.rating, 'w-4 h-4')}
                           </div>

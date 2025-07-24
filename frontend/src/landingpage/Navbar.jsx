@@ -1,18 +1,12 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/Authcontext';
 
 const Navbar = () => {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-    setIsMenuOpen(false);
-  };
 
   const isActive = (path) => {
     return location.pathname === path;
@@ -86,68 +80,17 @@ const Navbar = () => {
             })}
           </div>
 
-          {/* User Menu */}
+          {/* User Display or Auth Links */}
           <div className="flex items-center space-x-4">
             {user ? (
-              <div className="relative">
-                <button
-                  onClick={() => setIsMenuOpen(!isMenuOpen)}
-                  className="flex items-center space-x-3 bg-gradient-to-r from-slate-700/80 to-slate-600/80 rounded-xl px-4 py-2.5 hover:from-slate-600 hover:to-slate-500 transition-all duration-300 border border-slate-600/50 hover:border-emerald-400/50 transform hover:scale-105"
-                >
-                  <div className="w-8 h-8 bg-gradient-to-br from-emerald-400 via-teal-400 to-cyan-400 rounded-full flex items-center justify-center text-slate-900 font-bold text-sm shadow-lg">
-                    {user.name?.charAt(0).toUpperCase() || 'U'}
-                  </div>
-                  <span className="hidden sm:block text-slate-200 font-medium">
-                    {user.name || 'User'}
-                  </span>
-                  <svg
-                    className={`w-4 h-4 text-slate-400 transition-all duration-300 ${
-                      isMenuOpen ? 'rotate-180 text-emerald-400' : ''
-                    }`}
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                  </svg>
-                </button>
-
-                {isMenuOpen && (
-                  <div className="absolute right-0 mt-3 w-56 bg-slate-800/95 backdrop-blur-md rounded-xl shadow-2xl border border-slate-700/50 py-2 animate-fadeIn">
-                    {/* Mobile nav links */}
-                    <div className="md:hidden">
-                      {navLinks.map((link) => {
-                        if (link.protected && !user) return null;
-                        
-                        return (
-                          <Link
-                            key={link.path}
-                            to={link.path}
-                            onClick={() => setIsMenuOpen(false)}
-                            className={`flex items-center space-x-3 px-4 py-3 text-sm hover:bg-slate-700/50 transition-all duration-200 mx-2 rounded-lg ${
-                              isActive(link.path) ? 'text-emerald-400 bg-slate-700/30' : 'text-slate-300 hover:text-white'
-                            }`}
-                          >
-                            <span className="text-emerald-400">
-                              {getIcon(link.icon)}
-                            </span>
-                            <span>{link.label}</span>
-                          </Link>
-                        );
-                      })}
-                      <hr className="my-2 border-slate-700/50 mx-2" />
-                    </div>
-
-                    <button
-                      onClick={handleLogout}
-                      className="flex items-center space-x-3 w-full px-4 py-3 text-sm text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all duration-200 mx-2 rounded-lg"
-                    >
-                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clipRule="evenodd" />
-                      </svg>
-                      <span>Logout</span>
-                    </button>
-                  </div>
-                )}
+              <div className="flex items-center space-x-3 bg-gradient-to-r from-slate-700/80 to-slate-600/80 rounded-xl px-4 py-2.5 border border-slate-600/50">
+                {/* User Avatar - always show default icon with user initial */}
+                <div className="w-8 h-8 bg-emerald-400 rounded-full flex items-center justify-center text-slate-900 font-bold text-sm shadow-lg">
+                  {(user.firstName?.[0] || user.username?.[0] || user.name?.[0] || 'U').toUpperCase()}
+                </div>
+                <span className="hidden sm:block text-slate-200 font-medium">
+                  {user.firstName || user.username || user.name || 'User'}
+                </span>
               </div>
             ) : (
               <div className="flex items-center space-x-3">
@@ -181,12 +124,40 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Click outside to close menu */}
+      {/* Mobile Navigation Menu */}
       {isMenuOpen && (
-        <div
-          className="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm"
-          onClick={() => setIsMenuOpen(false)}
-        ></div>
+        <>
+          <div className="md:hidden bg-slate-800/95 backdrop-blur-md border-t border-slate-700/50">
+            <div className="px-4 py-2 space-y-1">
+              {navLinks.map((link) => {
+                if (link.protected && !user) return null;
+                return (
+                  <Link
+                    key={link.path}
+                    to={link.path}
+                    onClick={() => setIsMenuOpen(false)}
+                    className={`flex items-center space-x-3 px-4 py-3 text-sm rounded-lg transition-all duration-200 ${
+                      isActive(link.path) 
+                        ? 'text-emerald-400 bg-slate-700/30' 
+                        : 'text-slate-300 hover:text-white hover:bg-slate-700/50'
+                    }`}
+                  >
+                    <span className="text-emerald-400">
+                      {getIcon(link.icon)}
+                    </span>
+                    <span>{link.label}</span>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+          
+          {/* Click outside to close menu */}
+          <div
+            className="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm"
+            onClick={() => setIsMenuOpen(false)}
+          ></div>
+        </>
       )}
     </nav>
   );

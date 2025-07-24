@@ -85,8 +85,7 @@ const reviewSchema = new mongoose.Schema({
   },
   flagReason: {
     type: String,
-    enum: ['spam', 'inappropriate', 'offensive', 'fake', 'other'],
-    default: null
+    enum: ['spam', 'inappropriate', 'offensive', 'fake', 'other']
   },
   isApproved: {
     type: Boolean,

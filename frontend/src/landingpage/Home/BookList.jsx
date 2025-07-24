@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from "../../context/AuthContext";
+import api from '../../services/api';
 
 const BookList = () => {
   const { user } = useAuth();
@@ -16,79 +17,67 @@ const BookList = () => {
   const [genres, setGenres] = useState([]);
   const [authors, setAuthors] = useState([]);
 
-  // Mock data - replace with actual API calls
+  // Fetch books from backend
   useEffect(() => {
-    // Simulate API call
-    setTimeout(() => {
-      const mockBooks = [
-        {
-          id: 1,
-          title: "The Great Gatsby",
-          author: "F. Scott Fitzgerald",
-          genre: "Classic Literature",
-          averageRating: 4.2,
-          reviewCount: 156,
-          dateAdded: "2024-01-15",
-          coverImage: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=300&h=400&fit=crop"
-        },
-        {
-          id: 2,
-          title: "To Kill a Mockingbird",
-          author: "Harper Lee",
-          genre: "Classic Literature",
-          averageRating: 4.8,
-          reviewCount: 203,
-          dateAdded: "2024-02-10",
-          coverImage: "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=300&h=400&fit=crop"
-        },
-        {
-          id: 3,
-          title: "1984",
-          author: "George Orwell",
-          genre: "Dystopian Fiction",
-          averageRating: 4.5,
-          reviewCount: 178,
-          dateAdded: "2024-01-28",
-          coverImage: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=300&h=400&fit=crop"
-        },
-        {
-          id: 4,
-          title: "The Catcher in the Rye",
-          author: "J.D. Salinger",
-          genre: "Coming of Age",
-          averageRating: 3.9,
-          reviewCount: 142,
-          dateAdded: "2024-02-05",
-          coverImage: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=400&fit=crop"
-        },
-        {
-          id: 5,
-          title: "Pride and Prejudice",
-          author: "Jane Austen",
-          genre: "Romance",
-          averageRating: 4.6,
-          reviewCount: 234,
-          dateAdded: "2024-01-20",
-          coverImage: "https://images.unsplash.com/photo-1589829085413-56de8ae18c73?w=300&h=400&fit=crop"
-        },
-        {
-          id: 6,
-          title: "The Lord of the Rings",
-          author: "J.R.R. Tolkien",
-          genre: "Fantasy",
-          averageRating: 4.9,
-          reviewCount: 312,
-          dateAdded: "2024-02-12",
-          coverImage: "https://images.unsplash.com/photo-1518373714866-3f1478910cc0?w=300&h=400&fit=crop"
+    const fetchBooks = async () => {
+      setLoading(true);
+      try {
+        // Build query params
+        const params = {
+          page: currentPage,
+          limit: 9,
+        };
+        if (filters.genre) params.genre = filters.genre;
+        if (filters.author) params.author = filters.author;
+        // Map sortBy to backend sort fields
+        switch (filters.sortBy) {
+          case 'newest':
+            params.sortBy = 'createdAt';
+            params.sortOrder = 'desc';
+            break;
+          case 'oldest':
+            params.sortBy = 'createdAt';
+            params.sortOrder = 'asc';
+            break;
+          case 'rating-high':
+            params.sortBy = 'averageRating';
+            params.sortOrder = 'desc';
+            break;
+          case 'rating-low':
+            params.sortBy = 'averageRating';
+            params.sortOrder = 'asc';
+            break;
+          case 'title':
+            params.sortBy = 'title';
+            params.sortOrder = 'asc';
+            break;
+          default:
+            break;
         }
-      ];
-
-      setBooks(mockBooks);
-      setGenres([...new Set(mockBooks.map(book => book.genre))]);
-      setAuthors([...new Set(mockBooks.map(book => book.author))]);
-      setTotalPages(2);
-      setLoading(false);
-    }, 1000);
+        // Fetch books
+        const res = await api.get('/books', { params });
+        const data = res.data.data || res.data; // support both {data: {books}} and {books}
+        const booksArr = (data.books || data).map(book => ({
+          ...book,
+          id: book._id || book.id
+        }));
+        setBooks(booksArr);
+        // Extract genres and authors for filters
+        setGenres([...new Set(booksArr.map(book => book.genre))]);
+        setAuthors([...new Set(booksArr.map(book => book.author))]);
+        // Pagination
+        const total = res.data.total || (data.pagination && data.pagination.total) || booksArr.length;
+        const limit = params.limit || 9;
+        setTotalPages(Math.max(1, Math.ceil(total / limit)));
+      } catch (err) {
+        setBooks([]);
+        setGenres([]);
+        setAuthors([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchBooks();
   }, [currentPage, filters]);
 
   const renderStars = (rating) => {
@@ -271,7 +260,7 @@ const BookList = () => {
                 </div>
 
                 <Link
-                  to={`/book/${book.id}`}
+                  to={`/books/${book.id}`}
                   className="block w-full text-center bg-gradient-to-r from-blue-500 to-purple-500 text-white py-3 rounded-lg font-medium hover:from-blue-600 hover:to-purple-600 transition-all duration-200 transform hover:scale-105 shadow-md hover:shadow-lg"
                 >
                   View Details
