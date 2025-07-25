@@ -11,6 +11,8 @@ import Unauthorized from './landingpage/Auth/Unauthorized';
 import BookList from './landingpage/Home/BookList';
 import BookDetail from './landingpage/Home/BookDetail';
 import AddBook from './landingpage/Home/AddBook';
+import FooterAbout from './landingpage/FooterElements/About';
+import FooterContact from './landingpage/FooterElements/Contact';
 
 // Protected Route wrapper
 function PrivateRoute({ children }) {
@@ -37,6 +39,8 @@ function App() {
           <Routes>
             <Route path="/" element={<Hero />} />
             <Route path="/about" element={<About />} />
+            <Route path="/footer-about" element={<FooterAbout />} />
+            <Route path="/footer-contact" element={<FooterContact />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/unauthorized" element={<Unauthorized />} />

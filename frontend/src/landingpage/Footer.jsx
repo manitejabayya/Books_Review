@@ -34,8 +34,8 @@ const Footer = () => {
   const quickLinks = [
     { name: 'Home', href: '/', icon: 'home' },
     { name: 'Add Book', href: '/add-book', icon: 'plus' },
-    { name: 'About', href: '#', icon: 'info' },
-    { name: 'Contact', href: '#', icon: 'mail' }
+    { name: 'About', href: '/footer-about', icon: 'info' },
+    { name: 'Contact', href: '/footer-contact', icon: 'mail' }
   ];
 
   const categories = [
